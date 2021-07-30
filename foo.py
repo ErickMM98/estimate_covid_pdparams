@@ -34,19 +34,27 @@ def initial_y():
     return 0.5
 df = pd.read_csv('../LotkaVolterraData.csv')
 
-my_model = pde.PDEmodel(df, LotkaVolterra, [initial_x, initial_y], bounds=[(2, 4), (0.5,2)],
-                        param_names=[r'$a$', r'$b$'], nvars=2, ndims=0, nreplicates=3, obsidx=None, outfunc=None)
+#my_model = pde.PDEmodel(df, LotkaVolterra, [initial_x, initial_y], bounds=[(2, 4), (0.5,2)],
+#                        param_names=[r'$a$', r'$b$'], nvars=2, ndims=0, nreplicates=3, obsidx=None, outfunc=None)
 
-print(my_model.initial_condition)
+#print(my_model.initial_condition)
 
 """
 fig, ax = plt.subplots()
+ax.set_title("Prueba")
 ax.scatter(df['0'],df['1'] , label = 'x')
 ax.scatter(df['0'],df['2'] , label = 'y')
 ax.legend()
 plt.show()
 """
 
-print(my_model.fit())
-print(my_model.best_params)
-print(my_model.best_error)
+#print(my_model.fit())
+#print(my_model.best_params)
+#print(my_model.best_error)
+#print(my_model.likelihood_profiles())
+
+df = pd.read_csv("CoV2019.csv")
+print(df.columns)
+print(df[['Death China', 'Death Outside']])
+print(df['China'])
+print(df['Date of report'])
