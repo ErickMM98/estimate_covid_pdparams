@@ -15,26 +15,7 @@ import matplotlib.pyplot as plt
 import PDEparams as pde
 
 
-
-
-# -----------------------------------------------------------
-# ------------- Primer ajuste -------------------------------
-# -----------------------------------------------------------
-"""
-df = pd.read_csv("CoV2019.csv")
-print(df.columns)
-
-fig, ax = plt.subplots()
-ax.set_title("Prueba")
-ax.scatter(df['Date of report'],df['China'] , label = 'Casos')
-ax.scatter(df['Date of report'],df['Death China'] , label = 'y')
-ax.set_yscale("log")
-#ax.legend()
-ax.tick_params(rotation=90)
-ax.set_xticks((0,df.shape[0] ))
-#help(ax)
-plt.show()
-"""
+df = pd.read_csv('../LotkaVolterraData.csv')
 
 data = pd.read_csv('CoV2019.csv')
 china = data["China"][:]  # data["China"][:27]
@@ -62,50 +43,57 @@ init_I = I[0]
 init_R = R[0]
 init_S = S[0]
 
+fig, ax = plt.subplots()
+ax.plot(days[bool_array].index, S, color ='blue', marker = 's', alpha= 0.5,
+       label = 'Datos S')
+ax.plot(days[bool_array].index, I, color ='green',marker = 's',alpha= 0.5,
+       label = 'Datos I')
+ax.plot(days[bool_array].index, R, color ='red',marker = 's',alpha= 0.5,
+       label = 'Datos R')
+plt.show()
 
-# fig, ax = plt.subplots()
-# ax.plot(days[bool_array], S, color ='blue', marker = 's', alpha= 0.5,
-#        label = 'Datos S')
-# ax.plot(days[bool_array], I, color ='green',marker = 's',alpha= 0.5,
-#        label = 'Datos I')
-# ax.plot(days[bool_array], R, color ='red',marker = 's',alpha= 0.5,
-#        label = 'Datos R')
-# plt.show()
 
-def SIRModel(x, t, b, g):
-    '''The input z corresponds to the current state of the system, z = [s, i, r]. Since the input is in 1D, no
+
+# -----------------------------------------------------------
+# ------------- Primer ajuste -------------------------------
+# -----------------------------------------------------------
+def LotkaVolterra(z, t, a, b):
+    '''The input z corresponds to the current state of the system, z = [x, y]. Since the input is in 1D, no
     pre-processing is needed.
 
     t is the current time.
 
-    g and b correspond to the unknown parameters.
+    a and b correspond to the unknown parameters.
     '''
-    s, i, r = x
-    dzdy = [-b * s * i,
-             b * s * i - g * i,
-             g * i]
-    return dzdy
 
-def initial_s():
+    x, y = z
+
+    return [-b * x * y,
+            b * x * y - a*y]
+
+
+def initial_x():
     return init_S
 
-def initial_i():
+def initial_y():
     return init_I
 
-def initial_r():
-    return init_R
 
-df_correct_data = pd.DataFrame({'t': days[bool_array],
-                                's': S,
-                                'i': I,
-                                'r': R})
 
-my_model = pde.PDEmodel(df_correct_data, SIRModel, [initial_r, initial_i, initial_r],
-                        bounds=[(0.5, 5), (0.5,5)], param_names=[r'$\beta$', r'$\gamma$'],
-                        nvars=2, ndims=0, nreplicates=1)
+new_df = pd.DataFrame({'0': days[bool_array].index,
+                       '1': S,
+                       '2': I})
+#print(new_df)
 
-print(my_model.fit())
-#print(my_model.best_params)
-#print(my_model.best_error)
+
+my_model = pde.PDEmodel(new_df, LotkaVolterra, [initial_x, initial_y], bounds=[(0.001, 0.02), (0.2,0.5)],
+                         param_names=[r'$\gamma$', r'$\beta$'], nvars=2, ndims=0, nreplicates=1)
+
+my_model.fit()
+print(my_model.best_params)
+print(my_model.best_error)
 #print(my_model.likelihood_profiles())
 #my_model.plot_profiles()
+#plt.show()
+
+

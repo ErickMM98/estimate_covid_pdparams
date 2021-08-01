@@ -252,7 +252,8 @@ class PDEmodel:
             self.error = median_absolute_error
 
 
-        optimisation = differential_evolution(self.costfn, bounds=self.bounds, args=(self.initial_condition, self.functiondata,))
+        optimisation = differential_evolution(self.costfn, bounds=self.bounds, args=(self.initial_condition,
+                                                                                     self.functiondata,))
 
         params = optimisation.x
 

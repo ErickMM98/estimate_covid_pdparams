@@ -67,7 +67,7 @@ def initial_i():
 def initial_r():
     return init_R
 
-df_correct_data = pd.DataFrame({'t': days[bool_array].index / 27,
+df_correct_data = pd.DataFrame({'t': days[bool_array].index,
                                 's': S,
                                 'i': I,
                                 'r': R})
@@ -80,7 +80,7 @@ my_model = pde.PDEmodel(df_correct_data, SIRModel, [initial_r, initial_i, initia
                         bounds=bounds, param_names=[r'$\beta$', r'$\gamma$'],
                         nvars=3, ndims=0, nreplicates=1)
 
-#print(days[bool_array].index / 26)
+
 print(my_model.fit())
 #print(my_model.best_params)
 #print(my_model.best_error)
