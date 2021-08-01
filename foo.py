@@ -27,14 +27,19 @@ def LotkaVolterra(z, t, a, b):
 
     return [a * x * (1 - x) - b * x * y, b * x * y - y]
 
-def initial_x():
-    return 0.3
 
-def initial_y():
-    return 0.5
 df = pd.read_csv('../LotkaVolterraData.csv')
 
-#my_model = pde.PDEmodel(df, LotkaVolterra, [initial_x, initial_y], bounds=[(2, 4), (0.5,2)],
+t = 15
+
+def initial_x():
+    return df['1'].iloc[t]
+
+def initial_y():
+    return df['2'].iloc[t]
+
+#df.iloc[15:,:], df['1'].iloc[15], df['2'].iloc[15]
+#my_model = pde.PDEmodel(df.iloc[15:,:], LotkaVolterra, [initial_x, initial_y], bounds=[(2, 4), (0.5,2)],
 #                        param_names=[r'$a$', r'$b$'], nvars=2, ndims=0, nreplicates=3, obsidx=None, outfunc=None)
 
 #print(my_model.initial_condition)
@@ -48,13 +53,29 @@ ax.legend()
 plt.show()
 """
 
-#print(my_model.fit())
-#print(my_model.best_params)
-#print(my_model.best_error)
-#print(my_model.likelihood_profiles())
+"""
+print(my_model.fit())
+print(my_model.best_params)
+print(my_model.best_error)
+print(my_model.likelihood_profiles())
+my_model.plot_profiles()
+"""
 
-df = pd.read_csv("CoV2019.csv")
-print(df.columns)
-print(df[['Death China', 'Death Outside']])
-print(df['China'])
-print(df['Date of report'])
+#df = pd.read_csv("CoV2019.csv")
+#print(df.columns)
+#print(df[['Death China', 'Death Outside']])
+#print(df['China'])
+#print(df['Days'])
+#print(df.columns)
+
+
+
+"""
+fig, ax = plt.subplots()
+ax.set_title("Prueba")
+ax.scatter(df['Date of report'],df['China'] , label = 'Casos')
+ax.scatter(df['Date of report'],df['Death China'] , label = 'y')
+ax.set_yscale("log")
+ax.legend()
+plt.show()
+"""
