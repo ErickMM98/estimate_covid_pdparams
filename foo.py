@@ -45,7 +45,7 @@ ax.plot(exact_date, I, label = 'Infectados', marker ='s')
 ax.plot(exact_date, R, label = 'Fallecidos', marker ='s')
 ax.set_yscale("log")
 ax.legend()
-#I = china.copy() / N
+I = china.copy() / N
 h_lim = exact_date[I[I > 1].index[0]]
 ax.axvline(h_lim-1, color = 'red', linestyle =':')
 ax.xaxis.set_tick_params(rotation=45)
