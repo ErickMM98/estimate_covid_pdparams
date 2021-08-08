@@ -32,6 +32,48 @@ deaths_outside_total = data["Death Outside"]
 
 N = 56 * 10 ** 3  # estimate of people affected by lock down
 
+#-----------------------------------------------------------------
+#Generamos el gráfico para ver la base en los primeros meses
+
+exact_date = days
+I = china.copy()
+R = deaths_china_total.copy()
+
+fig, ax = plt.subplots()
+ax.set_title("Dinámica de los casos en China.")
+ax.plot(exact_date, I, label = 'Infectados', marker ='s')
+ax.plot(exact_date, R, label = 'Fallecidos', marker ='s')
+ax.set_yscale("log")
+ax.legend()
+#I = china.copy() / N
+h_lim = exact_date[I[I > 1].index[0]]
+ax.axvline(h_lim-1, color = 'red', linestyle =':')
+ax.xaxis.set_tick_params(rotation=45)
+fig.savefig("images/dinamica.pdf")
+fig.show()
+
+
+#Ya con la tranformación
+I = china.copy() / N
+R = deaths_china_total.copy() / N
+bool_array = (I <= 1)
+I = I[bool_array]
+R = R[bool_array]
+S = 1 - I - R
+fig, ax = plt.subplots()
+ax.set_title("Dinámica a ajustar")
+ax.plot(exact_date[bool_array].index, 1 - R - I, label = 'Susceptibles', marker ='s')
+ax.plot(exact_date[bool_array].index, I, label = 'Infectados', marker ='s')
+ax.plot(exact_date[bool_array].index, R, label = 'Recuperados', marker ='s')
+#ax.set_yscale("log")
+ax.legend()
+#ax.axvline(h_lim-1, color = 'red', linestyle =':')
+ax.xaxis.set_tick_params(rotation=45)
+fig.savefig("images/buenosdatos.pdf")
+fig.show()
+
+print(data.columns)
+
 I = china.copy() / N
 R = deaths_china_total.copy() / N
 bool_array = (I <= 1)
@@ -43,57 +85,62 @@ init_I = I[0]
 init_R = R[0]
 init_S = S[0]
 
-fig, ax = plt.subplots()
-ax.plot(days[bool_array].index, S, color ='blue', marker = 's', alpha= 0.5,
-       label = 'Datos S')
-ax.plot(days[bool_array].index, I, color ='green',marker = 's',alpha= 0.5,
-       label = 'Datos I')
-ax.plot(days[bool_array].index, R, color ='red',marker = 's',alpha= 0.5,
-       label = 'Datos R')
-plt.show()
+# fig, ax = plt.subplots()
+# ax.plot(days[bool_array].index, S, color ='blue', marker = 's', alpha= 0.5,
+#        label = 'Datos S')
+# ax.plot(days[bool_array].index, I, color ='green',marker = 's',alpha= 0.5,
+#        label = 'Datos I')
+# ax.plot(days[bool_array].index, R, color ='red',marker = 's',alpha= 0.5,
+#        label = 'Datos R')
+# plt.show()
 
 
 
 # -----------------------------------------------------------
 # ------------- Primer ajuste -------------------------------
 # -----------------------------------------------------------
-def LotkaVolterra(z, t, a, b):
-    '''The input z corresponds to the current state of the system, z = [x, y]. Since the input is in 1D, no
-    pre-processing is needed.
+# def LotkaVolterra(z, t, a, b):
+#     '''The input z corresponds to the current state of the system, z = [x, y]. Since the input is in 1D, no
+#     pre-processing is needed.
+#
+#     t is the current time.
+#
+#     a and b correspond to the unknown parameters.
+#     '''
+#
+#     x, y = z
+#
+#     return [-b * x * y,
+#             b * x * y - a*y]
+#
+#
+# def initial_x():
+#     return init_S
+#
+# def initial_y():
+#     return init_I
+#
+#
+#
+# new_df = pd.DataFrame({'0': days[bool_array].index,
+#                        '1': S,
+#                        '2': I})
+# #print(new_df)
+#
+#
+# my_model = pde.PDEmodel(new_df, LotkaVolterra, [initial_x, initial_y], bounds=[(0.001, 0.02), (0.2,0.5)],
+#                          param_names=[r'$\gamma$', r'$\beta$'], nvars=2, ndims=0, nreplicates=1)
+#
+# my_model.fit()
+# print(my_model.best_params)
+# print(my_model.best_error)
+# #print(my_model.likelihood_profiles())
+# #my_model.plot_profiles()
+# #plt.show()
 
-    t is the current time.
 
-    a and b correspond to the unknown parameters.
-    '''
-
-    x, y = z
-
-    return [-b * x * y,
-            b * x * y - a*y]
-
-
-def initial_x():
-    return init_S
-
-def initial_y():
-    return init_I
-
-
-
-new_df = pd.DataFrame({'0': days[bool_array].index,
-                       '1': S,
-                       '2': I})
-#print(new_df)
-
-
-my_model = pde.PDEmodel(new_df, LotkaVolterra, [initial_x, initial_y], bounds=[(0.001, 0.02), (0.2,0.5)],
-                         param_names=[r'$\gamma$', r'$\beta$'], nvars=2, ndims=0, nreplicates=1)
-
-my_model.fit()
-print(my_model.best_params)
-print(my_model.best_error)
-#print(my_model.likelihood_profiles())
-#my_model.plot_profiles()
-#plt.show()
+# -----------------------------------------------------------
+# ------------- Segundo ajuste -------------------------------
+# -----------------------------------------------------------
 
 
